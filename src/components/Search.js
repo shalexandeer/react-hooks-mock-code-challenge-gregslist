@@ -1,20 +1,44 @@
-import React from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useListingContext, useListings, useListingsDispatch} from "../services/providers/context";
 
 function Search() {
-  function handleSubmit(e) {
+  const listingData = useListings()
+  const dispatch = useListingsDispatch()
+  
+  const [searchInput, setSearchInput] = useState({
+    value: null
+  });
+
+  useEffect(() => {
+    // console.log(searchInput.value);
+  }, [searchInput.value]);
+  
+  const handleChange = useCallback((text) => {
+    setSearchInput(() => {
+      return {value: text}
+    })
+  },[searchInput])
+
+  const handleSubmitSearch = (e) => {
     e.preventDefault();
-    console.log("submitted");
+    dispatch({
+      type: 'search-listing',
+      query: searchInput,
+      // data: listingData
+    })
+    // console.log(listingData);
   }
 
   return (
-    <form className="searchbar" onSubmit={handleSubmit}>
+    <form className="searchbar" onSubmit={handleSubmitSearch}>
+      { listingData.data !== null &&
       <input
         type="text"
         id="search"
         placeholder="search free stuff"
-        value={""}
-        onChange={(e) => console.log(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
       />
+      }
       <button type="submit">🔍</button>
     </form>
   );

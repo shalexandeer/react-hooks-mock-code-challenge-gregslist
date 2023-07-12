@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "json-server": "^0.16.3",
+    "axios": "^1.4.0",
+    "json-server": "^0.17.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^4.0.3"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts --openssl-legacy-provider start",
     "server": "json-server --watch db.json -p 6001",
     "test": "jest"
   },
