@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useReducer, useState } from "react";
+import { createContext, useContext, useEffect, useReducer} from "react";
 
 const ListingContext = createContext(undefined)
 const ListingDispatchContext = createContext(undefined)
@@ -8,17 +8,41 @@ export default function listingReducer(state, action) {
     const {type} = action;
     switch (type) {
         case 'search-listing':
+            const filteredListing = state.listing.filter(listing => listing.description.toLowerCase().includes(action.query))
             return {
                 ...state,
-                filtered: state.listing.filter(listing => listing.description.toLowerCase().includes(action.query.value)),
-                query: action.query.value
+                filtered: filteredListing,
+                query: action.query
             }
         case 'set-listing':
             return{
                 ...state,
                 listing: action.payload,
-                isLoading: action.isLoading
+                isLoading: action.isLoading,
+                query: action.query
             }
+        case 'delete-listing':
+            return{
+                ...state,
+                listing: state.listing.filter(item => item.id !== action.itemId)
+            } 
+        case 'favorite-listing':
+            if(action.existingListing.length > 0){
+                if(action.existingListing.find(({id}) => id === action.item.id) !== undefined){
+                    return{
+                        ...state,
+                        favorite: action.existingListing.filter((item) => item.id !== action.item.id)
+                    }
+                };
+            }
+            action.existingListing.push(action.item)
+            const pushedItem = action.existingListing
+            return {
+                ...state,
+                favorite: pushedItem 
+            }
+
+        
         default:
             return state
     }
@@ -30,6 +54,8 @@ export function ListingProvider({children}){
         listing: null,
         filtered: null,
         isLoading: true,
+        favorite: [],
+        query: ''
     })
     
     
@@ -37,7 +63,6 @@ export function ListingProvider({children}){
         const response = await fetch(`${baseURL}/listings`)
         const data = await response.json()
         
-        // setInitialState(data)
         dispatch({
           type: 'set-listing',
           payload: data,
