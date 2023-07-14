@@ -22,9 +22,11 @@ export default function listingReducer(state, action) {
                 query: action.query
             }
         case 'delete-listing':
+            console.log(action.existingListing);
             return{
                 ...state,
-                listing: state.listing.filter(item => item.id !== action.itemId)
+                listing: state.listing.filter(item => item.id !== action.itemId),
+                favorite: action.existingListing.filter(item => item.id !== action.itemId)
             } 
         case 'favorite-listing':
             if(action.existingListing.length > 0){
@@ -41,8 +43,6 @@ export default function listingReducer(state, action) {
                 ...state,
                 favorite: pushedItem 
             }
-
-        
         default:
             return state
     }

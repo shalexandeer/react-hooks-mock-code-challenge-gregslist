@@ -1,38 +1,23 @@
-import React, { useCallback, useState } from "react";
-import { useListings, useListingsDispatch} from "../services/providers/context";
+import React, { memo } from "react";
+import { useListings } from "../services/providers/context";
 
-function Search() {
-  const listingData = useListings()
-  const dispatch = useListingsDispatch()
-  
-  const [searchInput, setSearchInput] = useState({
-    value: ""
-  });
-  
-  const handleChange = useCallback((text) => {
-    setSearchInput(() => {
-      return {value: text}  
-    })
-    dispatch({
-      type: 'search-listing',
-      query: text,
-    })
-  },[dispatch])
+function Search({ handleChange, searchInput }) {
+  const listingData = useListings();
+  console.log('search rendered');
 
   return (
     <div className="searchbar">
-      { listingData.data !== null &&
-      <input
-        type="text"
-        id="search"
-        placeholder="search free stuff"
-        value={searchInput.value}
-        onChange={(e) => handleChange(e.target.value)}
-      />
-      }
-      {/* <button type="submit">🔍</button> */}
+      {listingData.data !== null && (
+        <input
+          type="text"
+          id="search"
+          placeholder="search free stuff"
+          value={searchInput.value}
+          onChange={(e) => handleChange(e.target.value)}
+        />
+      )}
     </div>
   );
 }
 
-export default Search;
+export default memo(Search);
